@@ -18,6 +18,6 @@ public class ButtonManager : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
-        Debug.Log("退出游戏");
+        //Debug.Log("退出游戏");
     }
 }

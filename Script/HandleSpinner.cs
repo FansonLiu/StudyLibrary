@@ -12,6 +12,7 @@ public class HandleSpinner : MonoBehaviour
 
     float delta;
     int rad;
+    Vector2 touchPosition;
     float touchDeltaPositionLog;
 
     public void Awake()
@@ -29,18 +30,15 @@ public class HandleSpinner : MonoBehaviour
         {
             currentSpeed += deltaSpeed;
             SpinnerRotate();
+            PrintSpeed();
         }
 
         //判断陀螺是否处于手指滑动后并离开屏幕状态
         if (touchDeltaPositionLog != 0 && Input.touchCount == 0)
         {
             SpeedDecrease();
-            //将陀螺转速计算整理为：圈/分钟
-            rad = Mathf.RoundToInt((currentSpeed * Mathf.Abs(touchDeltaPositionLog) * delta * 50 * 60) / 360);
-            ui.UpdateSpeedText(rad);
+            PrintSpeed();
         }
-
-
     }
 
     /// <summary>
@@ -48,10 +46,10 @@ public class HandleSpinner : MonoBehaviour
     /// </summary>
     public void SpeedDecrease()
     {
-        transform.Rotate(0, 0, -touchDeltaPositionLog * delta * currentSpeed);
+        transform.Rotate(Vector3.forward * touchDeltaPositionLog * delta * currentSpeed);
         if (currentSpeed > 0)
         {
-            currentSpeed = Mathf.Lerp(currentSpeed, startSpeed, delta * 0.35f);
+            currentSpeed = Mathf.Lerp(currentSpeed, startSpeed, delta * 0.05f);
         }
     }
 
@@ -60,8 +58,77 @@ public class HandleSpinner : MonoBehaviour
     /// </summary>
     public void SpinnerRotate()
     {
+        touchPosition = Camera.main.ScreenToViewportPoint(Input.GetTouch(0).position);
         Vector2 touchDeltaPosition = Input.GetTouch(0).deltaPosition;
-        transform.Rotate(-Vector3.forward * touchDeltaPositionLog * delta * currentSpeed);
-        touchDeltaPositionLog = touchDeltaPosition.x;
+        //print(touchDeltaPosition);
+        touchDeltaPositionLog = touchDeltaPosition.x + touchDeltaPosition.y;
+
+        if (touchDeltaPosition.x > touchDeltaPosition.y && touchDeltaPositionLog > 0)
+        {
+            if(touchPosition.y > 0.5f)
+            {
+                transform.Rotate(Vector3.forward * -touchDeltaPosition.x * delta * currentSpeed);
+            }
+            else
+            {
+                transform.Rotate(Vector3.forward * touchDeltaPosition.x * delta * currentSpeed);
+            }
+
+            touchDeltaPositionLog = touchDeltaPosition.x;
+        }
+        else if (touchDeltaPosition.x < touchDeltaPosition.y && touchDeltaPositionLog > 0)
+        {
+            if (touchPosition.x > 0.5f)
+            {
+                transform.Rotate(Vector3.forward * touchDeltaPosition.y * delta * currentSpeed);
+            }
+            else
+            {
+                transform.Rotate(Vector3.forward * -touchDeltaPosition.y * delta * currentSpeed);
+            }
+
+            touchDeltaPositionLog = touchDeltaPosition.y;
+        }
+        else if (touchDeltaPosition.x > touchDeltaPosition.y && touchDeltaPositionLog < 0)
+        {
+            if (touchPosition.x > 0.5f)
+            {
+                transform.Rotate(Vector3.forward * touchDeltaPosition.y * delta * currentSpeed);
+            }
+            else
+            {
+                transform.Rotate(Vector3.forward * -touchDeltaPosition.y * delta * currentSpeed);
+            }
+
+            touchDeltaPositionLog = touchDeltaPosition.y;
+        }
+        else if (touchDeltaPosition.x < touchDeltaPosition.y && touchDeltaPositionLog < 0)
+        {
+            if (touchPosition.y > 0.5f)
+            {
+                transform.Rotate(Vector3.forward * -touchDeltaPosition.x * delta * currentSpeed);
+            }
+            else 
+            {
+                transform.Rotate(Vector3.forward * touchDeltaPosition.x * delta * currentSpeed);
+            }
+
+            touchDeltaPositionLog = touchDeltaPosition.x; 
+        }
+        else
+        {
+            return;
+        }
+        
+    }
+
+    /// <summary>
+    /// 将陀螺转速计算整理为：圈/分钟
+    /// </summary>
+    public void PrintSpeed()
+    { 
+
+        rad = Mathf.RoundToInt((currentSpeed * Mathf.Abs(touchDeltaPositionLog) * delta * 50 * 60) / 360);
+        ui.UpdateSpeedText(rad);
     }
 }
