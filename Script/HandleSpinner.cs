@@ -7,7 +7,7 @@ public class HandleSpinner : MonoBehaviour
 {
     public float startSpeed = 0;
     public float currentSpeed = 0;
-    public float deltaSpeed = 10;
+    public float deltaSpeed = 1f;
     public UIManager ui;
 
     float delta;
@@ -29,6 +29,11 @@ public class HandleSpinner : MonoBehaviour
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
         {
             currentSpeed += deltaSpeed;
+            if (currentSpeed > 30)
+            {
+                currentSpeed = 30;
+            }
+            print("SPEED°´×¡:" + currentSpeed);
             SpinnerRotate();
             PrintSpeed();
         }
@@ -46,6 +51,12 @@ public class HandleSpinner : MonoBehaviour
     /// </summary>
     public void SpeedDecrease()
     {
+        print("DISTANCE======:"+touchDeltaPositionLog);
+        print("SPEEDÀë¿ª:"+currentSpeed);
+        if (touchDeltaPositionLog > 200)
+        {
+            touchDeltaPositionLog = 200;
+        }
         transform.Rotate(Vector3.forward * touchDeltaPositionLog * delta * currentSpeed);
         if (currentSpeed > 0)
         {
@@ -68,52 +79,54 @@ public class HandleSpinner : MonoBehaviour
             if(touchPosition.y > 0.5f)
             {
                 transform.Rotate(Vector3.forward * -touchDeltaPosition.x * delta * currentSpeed);
+                touchDeltaPositionLog = -touchDeltaPosition.x;
             }
             else
             {
                 transform.Rotate(Vector3.forward * touchDeltaPosition.x * delta * currentSpeed);
-            }
-
-            touchDeltaPositionLog = touchDeltaPosition.x;
+                touchDeltaPositionLog = touchDeltaPosition.x;
+            }  
         }
         else if (touchDeltaPosition.x < touchDeltaPosition.y && touchDeltaPositionLog > 0)
         {
             if (touchPosition.x > 0.5f)
             {
                 transform.Rotate(Vector3.forward * touchDeltaPosition.y * delta * currentSpeed);
+                touchDeltaPositionLog = touchDeltaPosition.y;
             }
             else
             {
                 transform.Rotate(Vector3.forward * -touchDeltaPosition.y * delta * currentSpeed);
+                touchDeltaPositionLog = -touchDeltaPosition.y;
             }
-
-            touchDeltaPositionLog = touchDeltaPosition.y;
         }
         else if (touchDeltaPosition.x > touchDeltaPosition.y && touchDeltaPositionLog < 0)
         {
             if (touchPosition.x > 0.5f)
             {
                 transform.Rotate(Vector3.forward * touchDeltaPosition.y * delta * currentSpeed);
+                touchDeltaPositionLog = touchDeltaPosition.y;
             }
             else
             {
                 transform.Rotate(Vector3.forward * -touchDeltaPosition.y * delta * currentSpeed);
+                touchDeltaPositionLog = -touchDeltaPosition.y;
             }
 
-            touchDeltaPositionLog = touchDeltaPosition.y;
+            
         }
         else if (touchDeltaPosition.x < touchDeltaPosition.y && touchDeltaPositionLog < 0)
         {
             if (touchPosition.y > 0.5f)
             {
                 transform.Rotate(Vector3.forward * -touchDeltaPosition.x * delta * currentSpeed);
+                touchDeltaPositionLog = -touchDeltaPosition.x;
             }
             else 
             {
                 transform.Rotate(Vector3.forward * touchDeltaPosition.x * delta * currentSpeed);
+                touchDeltaPositionLog = touchDeltaPosition.x;
             }
-
-            touchDeltaPositionLog = touchDeltaPosition.x; 
         }
         else
         {
