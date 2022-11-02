@@ -140,8 +140,12 @@ public class HandleSpinner : MonoBehaviour
     /// </summary>
     public void PrintSpeed()
     { 
-
         rad = Mathf.RoundToInt((currentSpeed * Mathf.Abs(touchDeltaPositionLog) * delta * 50 * 60) / 360);
         ui.UpdateSpeedText(rad);
+
+        if (rad == 0)
+        {
+            currentSpeed = 0;
+        }
     }
 }
