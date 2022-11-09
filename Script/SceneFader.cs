@@ -1,0 +1,44 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class SceneFader : MonoBehaviour
+{
+    CanvasGroup canvasGroup;
+    Canvas canvas;
+    public float fadeInDuration;
+    public float fadeOutDuration;
+
+    private void Awake()
+    {
+        canvasGroup = GetComponent<CanvasGroup>();
+        canvas = GetComponent<Canvas>();
+        DontDestroyOnLoad(gameObject);
+    }
+
+    public IEnumerator FadeSwitch()
+    {
+        yield return FadeOut(fadeOutDuration);
+        yield return FadeIn(fadeInDuration);
+    }
+
+    public IEnumerator FadeOut(float time)
+    {
+        while (canvasGroup.alpha < 0.7)
+        {
+            canvasGroup.alpha += Time.deltaTime / time;
+            yield return null;
+        }
+    }
+
+    public IEnumerator FadeIn(float time)
+    {
+        while (canvasGroup.alpha != 0)
+        {
+            canvasGroup.alpha -= Time.deltaTime / time;
+            yield return canvas.sortingOrder = 0;
+        }
+    }
+
+}

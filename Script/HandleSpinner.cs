@@ -8,7 +8,7 @@ public class HandleSpinner : MonoBehaviour
     public float startSpeed = 0;
     public float currentSpeed = 0;
     public float deltaSpeed = 1f;
-    public UIManager ui;
+    public GameMenu printSpeedUI;
 
     float delta;
     int rad;
@@ -18,22 +18,19 @@ public class HandleSpinner : MonoBehaviour
     public void Awake()
     {
         delta = Time.fixedDeltaTime;
-        ui = GetComponent<UIManager>();
     }
 
     public void FixedUpdate()
     {
-        ui.UpdateSpeedText(0);
+        printSpeedUI.UpdateSpeedText(0);
 
         //判断手指是否滑动屏幕
         if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
         {
             currentSpeed += deltaSpeed;
             if (currentSpeed > 30)
-            {
                 currentSpeed = 30;
-            }
-            print("SPEED按住:" + currentSpeed);
+
             SpinnerRotate();
             PrintSpeed();
         }
@@ -51,8 +48,6 @@ public class HandleSpinner : MonoBehaviour
     /// </summary>
     public void SpeedDecrease()
     {
-        print("DISTANCE======:"+touchDeltaPositionLog);
-        print("SPEED离开:"+currentSpeed);
         if (touchDeltaPositionLog > 200)
         {
             touchDeltaPositionLog = 200;
@@ -141,11 +136,9 @@ public class HandleSpinner : MonoBehaviour
     public void PrintSpeed()
     { 
         rad = Mathf.RoundToInt((currentSpeed * Mathf.Abs(touchDeltaPositionLog) * delta * 50 * 60) / 360);
-        ui.UpdateSpeedText(rad);
+        printSpeedUI.UpdateSpeedText(rad);
 
-        if (rad == 0)
-        {
+        if (rad <= 0)
             currentSpeed = 0;
-        }
     }
 }
